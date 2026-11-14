@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111726">
+  <meta name="description" content="Find your Pokémon-inspired primary type and discover whether your identity fits a carefully supported dual typing. A two-stage, 86-question personality quiz.">
+  <title>Type / Identity — Pokémon-Inspired Type Quiz</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c111d;
+      --surface: #171e2e;
+      --surface-2: #202a3d;
+      --ink: #f5f5f0;
+      --sub: #bec7d6;
+      --muted: #8e9bb0;
+      --line: rgba(226,236,255,.14);
+      --glow: #a5c6fa;
+      --accent: #9cc8f6;
+      --accent-ink: #0c1524;
+      --radius: 20px;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse 70% 45% at 82% -15%, rgba(124,134,242,.16), transparent 80%), radial-gradient(ellipse 65% 40% at -20% 110%, rgba(70,164,181,.11), transparent 85%), var(--bg); color: var(--ink); line-height: 1.6; }
+    button { font: inherit; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .45; }
+    button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #e6f1ff; outline-offset: 4px; }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    .site-header { border-bottom: 1px solid var(--line); background: rgba(12,17,29,.5); }
+    .header-inner { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.03em; font-size: 19px; }
+    .brand-mark { width: 32px; height: 32px; border-radius: 50%; border: 4px solid #e5f0ff; display: grid; place-items: center; position: relative; overflow: hidden; background: linear-gradient(to bottom, #b6caff 46%, #111726 47%, #111726 53%, #d3e4ff 54%); box-shadow: 0 0 25px rgba(147,197,253,.20); }
+    .brand-mark::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #101624; border: 3px solid #e7f2ff; }
+    .header-right { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 750; }
+    #app { padding-top: 44px; padding-bottom: 80px; min-height: calc(100vh - 148px); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800; color: #bac9e1; }
+    .eyebrow::before { content: ""; width: 20px; height: 2px; background: #82b8ec; border-radius: 8px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(44px, 6.3vw, 76px); font-weight: 850; letter-spacing: -.067em; line-height: 1.04; margin: 20px 0; }
+    h2 { font-size: clamp(29px, 4vw, 47px); font-weight: 830; letter-spacing: -.053em; line-height: 1.14; margin: 16px 0; }
+    h3 { font-size: 18px; letter-spacing: -.026em; line-height: 1.3; }
+    .gradient-text { color: #c5deff; }
+    .lead { font-size: 17px; line-height: 1.75; color: var(--sub); max-width: 640px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .tiny { font-size: 11px; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr); gap: 52px; align-items: center; padding-top: 35px; }
+    .hero-copy .lead { margin-bottom: 28px; }
+    .hero-statline { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0 30px; }
+    .pill { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; background: rgba(230,240,255,.04); font-size: 12px; font-weight: 650; color: #d6dfef; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .btn { border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; color: var(--ink); font-size: 14px; font-weight: 750; background: #222d42; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: transform .15s ease, background .15s ease, border-color .15s ease; min-height: 48px; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); background: #2c3b55; }
+    .btn-primary { background: #b8d4fa; border-color: #b8d4fa; color: #111a29; }
+    .btn-primary:hover:not(:disabled) { background: #d4e5ff; border-color: #d4e5ff; }
+    .btn-ghost { background: transparent; }
+    .btn-outline { background: #1a2333; }
+    .hero-art { min-height: 390px; position: relative; display: grid; place-items: center; }
+    .orbit { position: absolute; width: min(380px, 100%); aspect-ratio: 1; border: 1px solid rgba(220,232,255,.14); border-radius: 50%; box-shadow: 0 0 0 48px rgba(170,194,236,.018), 0 0 0 95px rgba(170,194,236,.014); }
+    .orbit::after { content: ""; position: absolute; inset: 22px; border-radius: 50%; border: 1px dashed rgba(219,234,255,.13); }
+    .art-center { width: 190px; height: 190px; border: 1px solid #53678b; border-radius: 40px; display: grid; place-items: center; background: linear-gradient(145deg, #2c3d58, #131f34 72%); box-shadow: 0 35px 90px #0007, inset 0 1px 0 #ffffff22; transform: rotate(-12deg); position: relative; }
+    .art-center span { font-size: 95px; font-weight: 850; color: #c7ddfc; line-height: 1; transform: rotate(12deg); }
+    .float-tag { position: absolute; padding: 10px 14px; font-size: 12px; letter-spacing: .08em; border-radius: 14px; background: #212e44; border: 1px solid #42516a; box-shadow: 0 20px 45px #0008; font-weight: 850; }
+    .float-tag.one { top: 12%; left: 4%; color: #ffd29e; transform: rotate(-9deg); }
+    .float-tag.two { top: 28%; right: -1%; color: #bce4fd; transform: rotate(8deg); }
+    .float-tag.three { bottom: 15%; left: 0; color: #d3bfff; transform: rotate(5deg); }
+    .float-tag.four { bottom: 7%; right: 8%; color: #c1edb9; transform: rotate(-7deg); }
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 45px; }
+    .info-card { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: rgba(241,247,255,.035); }
+    .info-number { color: #a5cffa; font-size: 13px; font-weight: 850; letter-spacing: .12em; }
+    .info-card h3 { font-size: 15px; margin: 9px 0 6px; }
+    .info-card p { font-size: 12.5px; color: var(--muted); margin-bottom: 0; line-height: 1.7; }
+    .principle { margin-top: 28px; border-left: 3px solid #91bcf1; background: #8fb9ee0e; padding: 14px 17px; color: #c1cadb; border-radius: 0 10px 10px 0; font-size: 13px; }
+    .principle strong { color: #e5edf8; }
+    .step-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .step-kicker { color: #bbd4fa; font-size: 11px; letter-spacing: .15em; font-weight: 850; text-transform: uppercase; }
+    .step-count { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .progress-track { height: 7px; border-radius: 100px; overflow: hidden; background: #293448; margin-bottom: 30px; }
+    .progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #7babe8, #c3ddff); width: 0%; transition: width .25s ease; }
+    .stage-dots { display: flex; gap: 10px; align-items: center; font-size: 11px; color: #7e8aa0; margin: 0 0 32px; flex-wrap: wrap; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; }
+    .stage-dots .active { color: #c2dcfe; }
+    .stage-dots .complete { color: #b0d2b8; }
+    .stage-separator { opacity: .4; }
+    .question-layout { max-width: 800px; margin: 0 auto; }
+    .question-box { background: linear-gradient(145deg, #1b2537, #161d2b); border: 1px solid var(--line); border-radius: 23px; padding: 37px; box-shadow: 0 25px 85px rgba(0,0,0,.15); }
+    .question-label { text-transform: uppercase; letter-spacing: .17em; font-size: 11px; color: #a2bfe6; font-weight: 800; margin-bottom: 13px; }
+    .question-title { font-size: clamp(24px, 3.7vw, 37px); line-height: 1.3; font-weight: 800; letter-spacing: -.036em; margin: 0 0 14px; }
+    .question-helper { color: var(--muted); font-size: 13px; margin: 0 0 24px; max-width: 610px; }
+    .choices { display: grid; gap: 10px; }
+    .choice { width: 100%; display: flex; gap: 14px; align-items: center; text-align: left; padding: 15px 16px; background: #1b2739; border: 1px solid #384459; border-radius: 12px; color: #e9eef6; font-size: 15px; line-height: 1.5; transition: background .15s, border-color .15s, transform .15s; }
+    .choice:hover { background: #263650; border-color: #779cc5; transform: translateX(2px); }
+    .choice.selected { border-color: #b8d8ff; background: #304561; box-shadow: inset 0 0 0 1px #93b8e5; }
+    .choice-index { width: 27px; height: 27px; border-radius: 8px; background: #ffffff0a; border: 1px solid #ffffff20; display: grid; place-items: center; font-size: 12px; color: #bdcce0; flex: none; }
+    .choice.selected .choice-index { background: #b7d5fd; color: #152338; font-weight: 850; }
+    .question-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; gap: 14px; }
+    .keyboard-tip { font-size: 12px; color: #8594aa; }
+    .question-footer .btn { min-height: 42px; padding: 10px 15px; }
+    .contrast-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 23px; }
+    .contrast-side { padding: 15px; background: #0e1725; border: 1px solid #34445b; border-radius: 13px; }
+    .contrast-side strong { display: block; font-size: 11px; letter-spacing: .14em; color: #a5c8ff; margin-bottom: 8px; }
+    .contrast-side p { margin: 0; color: #e1e9f7; font-size: 13px; }
+    .interlude, .results { max-width: 860px; margin: auto; }
+    .interlude { padding-top: 28px; }
+    .interlude .lead { margin-bottom: 24px; }
+    .type-sigil { display: inline-grid; place-items: center; width: 68px; height: 68px; border-radius: 18px; background: color-mix(in srgb, var(--type-color) 21%, #162033); color: var(--type-color); font-size: 30px; border: 1px solid color-mix(in srgb, var(--type-color) 60%, transparent); font-weight: 900; margin-bottom: 12px; }
+    .type-label { padding: 9px 16px; border: 1px solid color-mix(in srgb, var(--type-color) 60%, transparent); border-radius: 99px; background: color-mix(in srgb, var(--type-color) 14%, transparent); color: color-mix(in srgb, var(--type-color) 75%, white); display: inline-flex; gap: 9px; align-items: center; text-transform: uppercase; font-size: 12px; font-weight: 850; letter-spacing: .1em; }
+    .type-label .dot { width: 8px; height: 8px; background: var(--type-color); border-radius: 50%; }
+    .big-type { font-size: clamp(54px, 9vw, 97px); letter-spacing: -.08em; line-height: 1.02; margin: 10px 0 18px; font-weight: 850; }
+    .highlight-panel { padding: 28px; background: #1d2a3f; border-radius: 20px; border: 1px solid #425674; margin: 24px 0; }
+    .highlight-panel h3 { margin-bottom: 8px; }
+    .highlight-panel p { margin-bottom: 0; color: #c2cedf; }
+    .summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+    .summary-bit { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #ffffff08; }
+    .summary-bit .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 850; color: #a7bbd5; margin-bottom: 7px; }
+    .summary-bit p { font-size: 13px; line-height: 1.6; margin: 0; color: #e0e7f2; }
+    .result-top { padding: 28px 0 10px; }
+    .result-types { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; margin: 20px 0; }
+    .type-tile { background: color-mix(in srgb, var(--type-color) 12%, #1a2433); border: 1px solid color-mix(in srgb, var(--type-color) 40%, #3b4b61); border-radius: 17px; padding: 20px 24px; min-width: 204px; }
+    .type-tile .topline { display: block; color: #c7d3e7; font-size: 11px; text-transform: uppercase; font-weight: 850; letter-spacing: .14em; margin-bottom: 8px; }
+    .type-tile .name { font-weight: 850; font-size: clamp(29px, 4vw, 45px); letter-spacing: -.06em; line-height: 1.2; color: var(--type-color); }
+    .plus { font-size: 26px; color: #8fa0ba; font-weight: 450; }
+    .result-note { color: #bfcbdd; max-width: 720px; }
+    .result-section { background: #182234; border: 1px solid var(--line); border-radius: 17px; padding: 25px; margin: 14px 0; }
+    .result-section h3 { margin: 0 0 12px; }
+    .result-section p { color: #bfcbdd; font-size: 14px; margin-bottom: 10px; }
+    .result-section p:last-child { margin-bottom: 0; }
+    .bars { display: grid; gap: 13px; margin-top: 18px; }
+    .bar-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; gap: 12px; color: #e2e9f4; margin-bottom: 5px; }
+    .bar-head span:last-child { color: #9db1ca; font-variant-numeric: tabular-nums; font-size: 12px; }
+    .bar-bg { height: 8px; border-radius: 40px; background: #344156; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 40px; background: var(--type-color); }
+    .micro-note { color: #95a8c1 !important; font-size: 12px !important; margin-top: 15px; }
+    .lens-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .lens-chip { padding: 6px 10px; background: #2c3b53; border: 1px solid #536782; font-size: 12px; border-radius: 99px; color: #e5eefa; }
+    .compare-list { display: grid; gap: 10px; margin: 12px 0 0; }
+    .compare-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--line); padding: 9px 0; font-size: 13px; }
+    .compare-item:last-child { border-bottom: 0; }
+    .compare-item strong { font-weight: 750; color: #e5edf8; }
+    .compare-item span { color: #acbbce; max-width: 50%; text-align: right; }
+    details { background: #111c2c; border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; margin: 12px 0; }
+    summary { font-size: 14px; color: #e1ebf8; font-weight: 750; cursor: pointer; }
+    details p { margin-top: 13px; }
+    .callout { border-left: 3px solid #80a9d6; padding: 12px 18px; background: rgba(137,188,240,.07); font-size: 13px; color: #b8c5d7; margin: 17px 0 30px; }
+    .footer { color: #7e8da2; font-size: 12px; border-top: 1px solid var(--line); padding: 20px 0 33px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
+    .footer a { color: #c6d9f2; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 840px) { .hero { grid-template-columns: 1fr; gap: 22px; padding-top: 10px; } .hero-art { min-height: 300px; max-width: 420px; width: 100%; margin: 0 auto; } .orbit { width: 285px; } .art-center { width: 165px; height: 165px; } .info-grid { margin-top: 20px; } }
+    @media (max-width: 600px) { .shell { padding: 0 17px; } .site-header .header-inner { min-height: 64px; } #app { padding-top: 26px; padding-bottom: 42px; } .header-right { font-size: 10px; } .hero-art { min-height: 265px; } .orbit { width: 240px; } .art-center { width: 145px; height: 145px; border-radius: 30px; } .art-center span { font-size: 75px; } .float-tag { font-size: 10px; padding: 8px 10px; } .info-grid, .summary-strip { grid-template-columns: 1fr; } .info-card { padding: 15px; } .question-box { padding: 22px 17px; } .question-title { font-size: 24px; } .choice { font-size: 14px; padding: 12px; } .contrast-pair { grid-template-columns: 1fr; } .contrast-side { padding: 12px; } .question-footer { align-items: flex-start; } .keyboard-tip { max-width: 180px; } .result-section { padding: 19px; } .type-tile { min-width: 150px; flex: 1; padding: 15px; } .footer-inner { display: block; } .footer-inner span { display: block; margin-top: 7px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+    @media print { body { background: #fff; color: #141a23; } .site-header, .footer, .actions, .print-hide { display: none !important; } #app { padding: 0; } .results { max-width: 100%; } .result-section, .result-top, .type-tile, .summary-bit { background: #fff; border-color: #d9dfe8; break-inside: avoid; } .result-section p, .summary-bit p, .result-note { color: #222; } .bar-bg { background: #e5e5e5; } details { display: none; } }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="shell header-inner">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>TYPE<span style="color:#96bce9">/</span>IDENTITY</span></div>
+    <div class="header-right">An 18-type personality experience</div>
+  </div>
+</header>
+<main id="app" class="shell" aria-live="polite"></main>
+<footer class="footer"><div class="shell footer-inner"><span>Independent fan-made Pokémon-inspired quiz. Not affiliated with Nintendo, Game Freak, or The Pokémon Company.</span><span>No account. No tracking. Answers stored only in this browser.</span></div></footer>
+<script>
+(() => {
+  'use strict';
+  const TYPES = ['Normal','Fire','Water','Grass','Electric','Ice','Fighting','Poison','Ground','Flying','Psychic','Bug','Rock','Ghost','Dragon','Dark','Steel','Fairy'];
+  const TYPE_INFO = {
+    Normal: { color:'#d6d7ca', mark:'○', essence:'Your adaptable, approachable, everyday nature brings people and possibilities together.', do:'You make practical choices, connect across differences, and help situations feel manageable.', symbol:'Versatility, belonging, and the quiet strength of ordinary life.' },
+    Fire: { color:'#ff9a72', mark:'✦', essence:'Your energy is passionate, expressive, and quick to ignite when something matters.', do:'You create momentum, inspire action, and lead with visible conviction.', symbol:'Flame, courage, intensity, and transformation through heat.' },
+    Water: { color:'#86c6f5', mark:'≈', essence:'Your natural way of being is emotionally attuned, receptive, and fluid.', do:'You read the room, find a way around obstacles, and support people through change.', symbol:'Tides, empathy, adaptability, and depth.' },
+    Grass: { color:'#a2df9b', mark:'❧', essence:'You are patient, nurturing, and inclined toward steady, organic growth.', do:'You cultivate habits, relationships, and ideas over time rather than forcing instant results.', symbol:'Roots, renewal, restoration, and growth.' },
+    Electric: { color:'#f8d96f', mark:'ϟ', essence:'Your mind and energy move through sudden connections and lively bursts.', do:'You spark ideas, accelerate a group, and react quickly to opportunity.', symbol:'Lightning, inspiration, current, and kinetic change.' },
+    Ice: { color:'#a9e4e8', mark:'✳', essence:'You maintain composure, independence, and clarity through deliberate restraint.', do:'You stay cool under pressure and use boundaries to protect your focus.', symbol:'Frost, stillness, precision, and preservation.' },
+    Fighting: { color:'#fa9c83', mark:'✊', essence:'You feel most yourself when developing strength through effort and discipline.', do:'You train, meet challenges directly, and respect earned improvement.', symbol:'Martial mastery, perseverance, resolve, and honorable struggle.' },
+    Poison: { color:'#c8a1e8', mark:'◈', essence:'You detect danger, hidden costs, and complicated realities early.', do:'You identify harmful dynamics, transform difficult lessons into wisdom, and warn others.', symbol:'Alchemy, toxins, caution, and the power to recognize what contaminates.' },
+    Ground: { color:'#d7b58a', mark:'▰', essence:'You are resourceful, realistic, and steady in the world as it actually is.', do:'You solve immediate problems, make plans tangible, and keep your footing amid disruption.', symbol:'Earth, terrain, grounding, and practical resilience.' },
+    Flying: { color:'#a7caff', mark:'↗', essence:'Freedom, movement, and wider perspectives are central to your identity.', do:'You rise above details, explore possibility, and pivot to new routes.', symbol:'Wind, open skies, mobility, and perspective.' },
+    Psychic: { color:'#f6a0c9', mark:'◎', essence:'You approach life through insight, interpretation, and patterns beneath appearances.', do:'You connect ideas, anticipate outcomes, and investigate the workings of minds.', symbol:'Thought, intuition, telepathy, and expanded perception.' },
+    Bug: { color:'#c6dd77', mark:'✳', essence:'You are adaptive through repetition, collaboration, and periodic reinvention.', do:'You experiment, improve in small steps, and find power in networks or teamwork.', symbol:'Metamorphosis, complex ecosystems, ingenuity, and collective action.' },
+    Rock: { color:'#cfb991', mark:'◆', essence:'You are anchored by continuity, strong convictions, and endurance.', do:'You hold your ground, preserve what lasts, and provide a solid foundation.', symbol:'Stone, mineral resilience, history, and permanence.' },
+    Ghost: { color:'#b7a3ed', mark:'☾', essence:'You sense what remains unsaid, remembered, or hidden in the atmosphere.', do:'You engage with mysteries, emotional echoes, ambiguity, and overlooked stories.', symbol:'Spirits, memory, hauntings, absence, and liminal spaces.' },
+    Dragon: { color:'#9baceb', mark:'♛', essence:'You are drawn toward ambitious quests, mastery, and a sense of personal destiny.', do:'You pursue extraordinary goals, build lasting impact, and act with conviction.', symbol:'Mythic power, aspiration, legacy, and grandeur.' },
+    Dark: { color:'#bfa9ab', mark:'◩', essence:'You are shrewd, independent-minded, and aware that appearances can mislead.', do:'You use strategy, protect information, and find unconventional paths through obstacles.', symbol:'Shadow, stealth, cleverness, and tactical independence—not moral evil.' },
+    Steel: { color:'#b3d1d7', mark:'⬡', essence:'You prefer dependable structure, precise standards, and strong protection.', do:'You design durable systems, act consistently, and defend important boundaries.', symbol:'Metal, engineering, armor, craft, and reliability.' },
+    Fairy: { color:'#ffbde1', mark:'✧', essence:'You bring imagination, kindness, and a sense of enchantment into daily life.', do:'You uplift others, soften tense situations, and reveal unexpected possibilities.', symbol:'Magic, folklore, wonder, connection, and blessing.' }
+  };
+  // Three independently worded signals for each of the 18 types = 54 primary questions.
+  const PRIMARY_BANK = {
+    Normal: [
+      'I am comfortable being useful in many roles without needing one defining specialty.',
+      'I often make unfamiliar situations feel ordinary and approachable for others.',
+      'A good, dependable everyday life can feel more meaningful than dramatic achievements.'
+    ],
+    Fire: [
+      'When I care about something, my enthusiasm becomes hard to contain.',
+      'I naturally generate momentum when a group feels stuck.',
+      'I would rather act with conviction than wait indefinitely for the perfect moment.'
+    ],
+    Water: [
+      'I quickly notice shifts in another person’s mood and adjust how I respond.',
+      'When circumstances change, I find a new path instead of resisting the current.',
+      'Listening and emotional understanding are among my strongest forms of support.'
+    ],
+    Grass: [
+      'I enjoy caring for something that grows slowly through consistent attention.',
+      'I trust patient improvement more than sudden breakthroughs.',
+      'Feeling connected to living things and natural rhythms helps me feel restored.'
+    ],
+    Electric: [
+      'My best ideas arrive as sudden sparks that make me want to move immediately.',
+      'I enliven other people through quick thinking and contagious energy.',
+      'I connect possibilities rapidly, even before I can explain every step.'
+    ],
+    Ice: [
+      'I usually stay composed when the atmosphere around me becomes intense.',
+      'Quiet and clear personal boundaries help me think at my best.',
+      'I prefer measured, precise responses over displaying every feeling immediately.'
+    ],
+    Fighting: [
+      'I enjoy improving a skill through deliberate practice and repetition.',
+      'When a challenge is fair, I would rather confront it directly than work around it.',
+      'I admire people who earn mastery through discipline and perseverance.'
+    ],
+    Poison: [
+      'I often spot hidden risks in a situation before other people notice them.',
+      'Difficult experiences teach me to recognize harmful patterns early.',
+      'I would rather name an uncomfortable problem than allow it to quietly spread.'
+    ],
+    Ground: [
+      'I feel most capable when I can turn abstract plans into practical next steps.',
+      'In a crisis, I focus on the real conditions in front of me.',
+      'People rely on me to stay grounded while circumstances shift.'
+    ],
+    Flying: [
+      'I need room to explore without feeling boxed into one path.',
+      'I often see the broader picture by stepping away from details.',
+      'When new horizons appear, I feel energized by the freedom to change direction.'
+    ],
+    Psychic: [
+      'I naturally look for patterns and mental connections beneath the surface.',
+      'I spend time trying to understand why people think the way they do.',
+      'Foreseeing possible outcomes is more satisfying to me than reacting blindly.'
+    ],
+    Bug: [
+      'I learn best through small experiments that improve over repeated attempts.',
+      'Coordinated groups can accomplish things I could not achieve alone.',
+      'I am comfortable reinventing my approach as I pass through different life stages.'
+    ],
+    Rock: [
+      'My core convictions tend to endure even when everything around me changes.',
+      'I want to build or preserve things that will last for years.',
+      'I can absorb pressure without losing my sense of what matters.'
+    ],
+    Ghost: [
+      'I am drawn to mysteries, memories, and stories that others overlook.',
+      'I notice emotional traces that linger even after a situation has ended.',
+      'I am comfortable spending time with ambiguity and the things left unsaid.'
+    ],
+    Dragon: [
+      'I feel pulled toward ambitious goals that might seem oversized to others.',
+      'I want to become exceptional at something that truly matters to me.',
+      'A sense of quest, legacy, or higher purpose motivates me.'
+    ],
+    Dark: [
+      'I prefer to understand everyone’s intentions before revealing my full plan.',
+      'When a direct route is blocked, I look for a clever or unconventional angle.',
+      'I question surface appearances and trust strategy over naive assumptions.'
+    ],
+    Steel: [
+      'I instinctively improve systems so they become more reliable and precise.',
+      'Clear rules and consistent standards help me protect what matters.',
+      'I value well-crafted, durable solutions more than improvised fixes.'
+    ],
+    Fairy: [
+      'I like helping others experience wonder, possibility, or delight.',
+      'I use imagination and warmth to change the feeling of a situation.',
+      'Kindness and meaningful bonds feel like powerful forces in their own right.'
+    ]
+  };
+  // Mix type signals across three passes; a fixed shuffle ensures predictable saved progress.
+  const order = [
+    ['Water','Dark','Grass','Fire','Rock','Fairy','Normal','Electric','Ground','Psychic','Bug','Ice','Dragon','Poison','Flying','Fighting','Steel','Ghost'],
+    ['Poison','Flying','Steel','Ice','Ghost','Fighting','Water','Normal','Dragon','Grass','Psychic','Rock','Fire','Bug','Fairy','Ground','Dark','Electric'],
+    ['Psychic','Electric','Normal','Dragon','Bug','Ground','Ghost','Fairy','Fighting','Rock','Water','Dark','Ice','Steel','Grass','Flying','Poison','Fire']
+  ];
+  const PRIMARY = order.flatMap((round, pass) => round.map(type => ({ type, text: PRIMARY_BANK[type][pass] })));
+  // Eight dimensions drawn from four dual-type patterns:
+  // biology + natural ability; environment + adaptation;
+  // physical form + mythology; elemental power + combat identity.
+  const LENSES = [
+    { key:'biology', name:'Biology', sub:'Your instinctive nature, not your literal species', qs:[
+      { text:'Your most instinctive way of being is…', options:[['Easygoing and versatile','Normal'],['Active and confrontational when needed','Fighting'],['Attuned and emotionally fluid','Water'],['Quick to perceive patterns beneath the surface','Psychic']] },
+      { text:'When you first join a group, you naturally…', options:[['Ignite the atmosphere','Fire'],['Bring a cool, measured calm','Ice'],['Make people feel welcome','Fairy'],['Read motives before participating','Dark']] },
+      { text:'Which natural rhythm feels most like you?', options:[['Slow, rooted renewal','Grass'],['Fast bursts of inspiration','Electric'],['Steady endurance','Rock'],['Cycles of experimentation and reinvention','Bug']] },
+      { contrast:['Rock','Ground'], text:'What is your deepest source of stability?', a:'Enduring principles: I remain solid even when circumstances shift.', b:'Practical footing: I respond to the terrain in front of me.' }
+    ]},
+    { key:'ability', name:'Natural ability', sub:'What comes easily or reliably to you', qs:[
+      { text:'You most reliably create progress by…', options:[['Designing better systems','Steel'],['Recognizing mental patterns','Psychic'],['Seeing the bigger picture','Flying'],['Spotting hidden risks','Poison']] },
+      { text:'A quiet strength of yours is…', options:[['Staying cool-headed when others panic','Ice'],['Making complex life feel manageable','Normal'],['Pursuing ambitious personal goals','Dragon'],['Understanding what others may be thinking','Psychic']] },
+      { text:'You could most naturally teach another person to…', options:[['Learn by repeated experiments','Bug'],['Solve real-world problems','Ground'],['Turn passion into momentum','Fire'],['Make others feel inspired and welcome','Fairy']] },
+      { contrast:['Water','Ice'], text:'When emotions rise, what best protects your clarity?', a:'Flowing with the feelings involved and adapting to them.', b:'Cooling down, stepping back, and preserving boundaries.' }
+    ]},
+    { key:'environment', name:'Environment', sub:'Conditions in which you thrive', qs:[
+      { text:'Your mind feels clearest in an atmosphere that is…', options:[['Patient and naturally restorative','Grass'],['Lively and full of stimuli','Electric'],['Quiet and carefully controlled','Ice'],['Open, expansive, and full of possibility','Flying']] },
+      { text:'The group you would choose to belong to is…', options:[['A collaborative network of experimenters','Bug'],['A familiar and welcoming everyday community','Normal'],['A disciplined team working toward mastery','Fighting'],['An imaginative, supportive circle','Fairy']] },
+      { text:'Which workplace or setting sharpens you?', options:[['A place where I can investigate hidden hazards','Poison'],['A stable place with a long history','Rock'],['A complex space with hidden dynamics','Dark'],['A hands-on environment where things get done','Ground']] },
+      { contrast:['Psychic','Ghost'], text:'Which unseen world interests you more?', a:'The patterns of thought, intent, and possibility inside minds.', b:'The memories, absences, and emotional echoes left behind.' }
+    ]},
+    { key:'adaptation', name:'Adaptation', sub:'How you change and respond to disruption', qs:[
+      { text:'A carefully made plan falls apart. You…', options:[['Flow around the obstruction','Water'],['Hold firm to the most important principle','Rock'],['Improvise immediately','Electric'],['Redesign the process','Steel']] },
+      { text:'A long, difficult experience improves you by…', options:[['Deepening your roots and patience','Grass'],['Changing your methods through trial and error','Bug'],['Building trained endurance','Fighting'],['Teaching you to spot dangerous patterns','Poison']] },
+      { text:'In an unfamiliar place, your first instinct is to…', options:[['Explore every possible route','Flying'],['Secure the practical basics','Ground'],['Assess the hidden social dynamics','Dark'],['Notice the atmosphere and hidden story','Ghost']] },
+      { contrast:['Ghost','Dark'], text:'When something feels hidden, which approach feels truer?', a:'I explore its atmosphere, mystery, and emotional history.', b:'I analyze motives and choose a strategic way forward.' }
+    ]},
+    { key:'form', name:'Physical form', sub:'Your presence and way of expressing yourself—not appearance or body type', qs:[
+      { text:'The energy of your presence is best described as…', options:[['Vivid and hard to miss','Fire'],['Composed and reserved','Ice'],['Approachable and familiar','Normal'],['Commanding and purposeful','Dragon']] },
+      { text:'Under pressure, the way you carry yourself is…', options:[['Firm and hard to move','Rock'],['Light and quick to reposition','Flying'],['Precise and controlled','Steel'],['Flexible and responsive','Water']] },
+      { text:'Which expression comes most naturally to you?', options:[['A decisive action','Fighting'],['A playful or encouraging gesture','Fairy'],['Focused attention and careful observation','Psychic'],['A subtle signal that says more than words','Ghost']] },
+      { contrast:['Fairy','Psychic'], text:'What feels more like your special presence?', a:'Creating enchantment, connection, and wonder for others.', b:'Seeing patterns, understanding minds, and sensing possibilities.' }
+    ]},
+    { key:'mythology', name:'Mythology', sub:'The story, symbol, or archetype you embody', qs:[
+      { text:'Which kind of legend feels closest to your own story?', options:[['A monumental quest toward mastery','Dragon'],['A mysterious story that lives on as an echo','Ghost'],['An alchemist revealing dangerous secrets','Poison'],['An earthbound guardian helping people survive','Ground']] },
+      { text:'If you played a role in a myth, you would be…', options:[['The steadfast guardian with a code','Steel'],['The clever strategist nobody can predict','Dark'],['The torchbearer who rallies the group','Fire'],['The guide who crosses shifting waters','Water']] },
+      { text:'Choose the symbol that represents growth in your life.', options:[['A tree that slowly takes root','Grass'],['A chrysalis becoming something new','Bug'],['An ancient stone weathering centuries','Rock'],['A lightning bolt changing everything at once','Electric']] },
+      { contrast:['Fighting','Normal'], text:'Which story of strength resonates more?', a:'Mastering a demanding discipline through intentional effort.', b:'Being resilient, flexible, and useful in everyday life.' }
+    ]},
+    { key:'element', name:'Elemental power', sub:'Your characteristic energy, understood metaphorically', qs:[
+      { text:'If your energy were a natural force, it would be…', options:[['An adaptable tide','Water'],['A warming, compelling flame','Fire'],['A clear, preserving frost','Ice'],['A sudden electric spark','Electric']] },
+      { text:'Which protective force most resembles your strengths?', options:[['Earth that gives me footing','Ground'],['Draconic power that protects what matters','Dragon'],['Wind that carries me beyond obstacles','Flying'],['Metal that forms reliable structure','Steel']] },
+      { text:'Which less-visible kind of power draws you?', options:[['Insight into thoughts and patterns','Psychic'],['Presence in memories and mysteries','Ghost'],['A blessing that creates wonder','Fairy'],['The ability to identify and neutralize hidden harms','Poison']] },
+      { contrast:['Dragon','Flying'], text:'What draws you more strongly toward the extraordinary?', a:'A grand quest, mastery, and a legacy worth leaving.', b:'The freedom to move, explore, and see from above.' }
+    ]},
+    { key:'combat', name:'Combat identity', sub:'How you meet challenges and handle conflict—not literal fighting', qs:[
+      { text:'When disagreement escalates, you tend to…', options:[['Address the issue openly','Fighting'],['Plan carefully before revealing your hand','Dark'],['Defuse tension with common sense','Normal'],['Ask what unspoken story is driving it','Ghost']] },
+      { text:'Your strongest line of defense is…', options:[['Unshakable conviction','Rock'],['Clear structure and rules','Steel'],['Empathy and flexibility','Water'],['The ability to detect harmful patterns','Poison']] },
+      { text:'You are most likely to overcome a difficult challenge through…', options:[['Bold pursuit of an ambitious goal','Dragon'],['Teamwork and iterative improvement','Bug'],['Patient, consistent effort','Grass'],['Unexpected speed and creative sparks','Electric']] },
+      { contrast:['Grass','Bug'], text:'Which model of improvement fits you best?', a:'Tending deep roots so gradual growth can flourish.', b:'Experimenting, collaborating, and transforming through stages.' }
+    ]}
+  ];
+  const SECONDARY = LENSES.flatMap(lens => lens.qs.map(q => ({ ...q, lens:lens.key, lensName:lens.name, lensSub:lens.sub })));
+  const CONTRAST_COPY = [
+    'Rock is enduring substance and conviction; Ground is immediate terrain and practical footing.',
+    'Water flexes and responds to feelings; Ice protects clarity through calm and boundaries.',
+    'Psychic examines minds and patterns; Ghost examines echoes, memories, and the uncanny.',
+    'Ghost explores haunting and what lingers; Dark explores motives and strategic choices.',
+    'Fairy inspires through enchantment and bonds; Psychic seeks knowledge through mental insight.',
+    'Fighting emphasizes trained combat mastery; Normal emphasizes everyday adaptability.',
+    'Dragon pursues mythic ambition; Flying prioritizes freedom, movement, and perspective.',
+    'Grass cultivates enduring life and growth; Bug uses iteration, cooperation, and metamorphosis.'
+  ];
+  const TOTAL = PRIMARY.length + SECONDARY.length;
+  const STORAGE_KEY = 'type-identity-quiz-v1';
+  const fresh = () => ({ screen:'intro', primaryIndex:0, secondaryIndex:0, primaryAnswers:Array(PRIMARY.length).fill(null), secondaryAnswers:Array(SECONDARY.length).fill(null) });
+  function restore() {
+    try {
+      const a = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!a || !['intro','primary','interlude','secondary','results'].includes(a.screen) || !Array.isArray(a.primaryAnswers) || a.primaryAnswers.length !== PRIMARY.length || !Array.isArray(a.secondaryAnswers) || a.secondaryAnswers.length !== SECONDARY.length) return fresh();
+      a.primaryIndex = Math.min(PRIMARY.length-1, Math.max(0, Number(a.primaryIndex)||0));
+      a.secondaryIndex = Math.min(SECONDARY.length-1, Math.max(0, Number(a.secondaryIndex)||0));
+      if (a.screen === 'interlude' || a.screen === 'secondary' || a.screen === 'results') {
+        if (a.primaryAnswers.some(n => !Number.isInteger(n) || n<0 || n>4)) a.screen='primary';
+      }
+      if (a.screen === 'results' && a.secondaryAnswers.some(n => !Number.isInteger(n) || n<0 || n>4)) a.screen='secondary';
+      return a;
+    } catch { return fresh(); }
+  }
+  let state = restore();
+  let nextTimer = null;
+  const app = document.getElementById('app');
+  function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {} }
+  function escapeHTML(v) { return String(v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const theme = type => `style="--type-color:${TYPE_INFO[type].color}"`;
+  function coreResults() {
+    const scores = Object.fromEntries(TYPES.map(t => [t,{ type:t, sum:0, count:0, pct:0 }]));
+    PRIMARY.forEach((item,i) => {
+      const v = state.primaryAnswers[i];
+      if (Number.isInteger(v)) { scores[item.type].sum += v; scores[item.type].count++; }
+    });
+    TYPES.forEach(t => { scores[t].pct = scores[t].count ? scores[t].sum/(4*scores[t].count) : 0; });
+    return Object.values(scores).sort((a,b) => b.pct-a.pct || TYPES.indexOf(a.type)-TYPES.indexOf(b.type));
+  }
+  function secondaryResults() {
+    const main = coreResults();
+    const primary = main[0].type;
+    const counts = Object.fromEntries(TYPES.map(t => [t,{ type:t, opportunities:0, picks:0, lenses:new Set(), contrastSum:0, contrastCount:0 }]));
+    SECONDARY.forEach((q,i) => {
+      const answer = state.secondaryAnswers[i];
+      if (q.contrast) {
+        const signal = [1,.5,0,-.5,-1][answer] ?? 0;
+        counts[q.contrast[0]].contrastSum += signal;
+        counts[q.contrast[1]].contrastSum -= signal;
+        counts[q.contrast[0]].contrastCount++;
+        counts[q.contrast[1]].contrastCount++;
+      } else {
+        q.options.forEach(opt => counts[opt[1]].opportunities++);
+        if (Number.isInteger(answer) && q.options[answer]) {
+          const picked = counts[q.options[answer][1]];
+          picked.picks++;
+          picked.lenses.add(q.lensName);
+        }
+      }
+    });
+    const candidates = TYPES.filter(t=>t!==primary).map(t => {
+      const c=counts[t];
+      const core=main.find(row=>row.type===t).pct;
+      const rate=c.opportunities ? c.picks/c.opportunities : 0;
+      const regularSignal=Math.max(0,Math.min(1,(rate-.25)/.35));
+      const contrast=c.contrastCount ? c.contrastSum/c.contrastCount : 0;
+      const strength=.48*core+.42*regularSignal+.1*Math.max(0,contrast);
+      return {...c, core, rate, strength, contrast, lenses:[...c.lenses]};
+    }).sort((a,b)=>b.strength-a.strength || b.picks-a.picks || TYPES.indexOf(a.type)-TYPES.indexOf(b.type));
+    const best=candidates[0], runner=candidates[1];
+    // A second type is earned only by repeated, cross-lens evidence and primary-quiz corroboration.
+    const hasSecond = best.picks>=3 && best.lenses.length>=2 && best.rate>=.42 && best.core>=.50 && best.strength>=.63 && (best.strength-runner.strength)>=.05;
+    return { primary, secondary:hasSecond?best.type:null, best, runner, candidates, counts };
+  }
+  function stageLabel(stage) { return `<div class="stage-dots"><span class="${stage==='primary'?'active':'complete'}">01 · Core identity</span><span class="stage-separator">/</span><span class="${stage==='secondary'?'active':stage==='results'?'complete':''}">02 · Eight lenses</span><span class="stage-separator">/</span><span class="${stage==='results'?'active':''}">03 · Your typing</span></div>`; }
+  function progress(stage,idx,length) { const overall=stage==='primary'?idx:PRIMARY.length+idx; return `<div class="step-head"><span class="step-kicker">${stage==='primary'?'Stage 01 · Your main type':'Stage 02 · Secondary refinement'}</span><span class="step-count">${idx+1} / ${length} <span class="muted">·</span> ${overall+1} / ${TOTAL} total</span></div><div class="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="${TOTAL}" aria-valuenow="${overall}"><div class="progress-fill" style="width:${overall/TOTAL*100}%"></div></div>`; }
+  function intro() {
+    const started = state.primaryAnswers.some(x=>x!==null);
+    return `<section class="hero"><div class="hero-copy"><div class="eyebrow">A deeper way to discover your type</div><h1>More than<br><span class="gradient-text">an element.</span></h1><p class="lead">Your type is a pattern of <strong>what you are</strong>, <strong>what you do</strong>, and <strong>what you symbolize</strong>. Find your primary type among all 18, then learn whether a second type genuinely fits—or whether your identity stands best on its own.</p><div class="hero-statline"><span class="pill">18 types</span><span class="pill">54 primary questions</span><span class="pill">32 refinement questions</span><span class="pill">About 12–18 minutes</span></div><div class="actions"><button class="btn btn-primary" data-action="start">${started?'Continue your quiz':'Find your type'} <span aria-hidden="true">→</span></button>${started?'<button class="btn btn-ghost" data-action="reset">Start over</button>':''}</div></div><div class="hero-art" aria-hidden="true"><div class="orbit"></div><div class="art-center"><span>18</span></div><span class="float-tag one">FIRE</span><span class="float-tag two">PSYCHIC</span><span class="float-tag three">GHOST</span><span class="float-tag four">GRASS</span></div></section>
+    <section class="info-grid" aria-label="How the quiz works"><div class="info-card"><div class="info-number">01 / DISCOVER</div><h3>Find your main type</h3><p>54 statements supply three separate personality signals for each of the 18 types. Your strongest consistent fit becomes your primary type.</p></div><div class="info-card"><div class="info-number">02 / REFINE</div><h3>Test eight identity attributes</h3><p>32 scenarios cover biology, natural ability, environment, adaptation, physical form, mythology, elemental power, and combat identity. Eight are direct close-type comparisons.</p></div><div class="info-card"><div class="info-number">03 / CONFIRM</div><h3>One type or a genuine pair</h3><p>A secondary type is added only when several answers across different attributes support it—and your first quiz also corroborates it.</p></div></section>
+    <aside class="principle"><strong>A typing is not literal.</strong> Looking like a dragon, enjoying snow, or liking a particular color doesn't automatically make anyone that type. Your choices are interpreted as patterns of disposition, abilities, behavior, and symbolism. Dark does not mean evil; Poison does not mean harmful. This is an interpretive fan quiz, not a scientifically validated personality test. There is no established question count that guarantees accuracy; 54 + 32 was chosen to balance coverage and depth.</aside>`;
+  }
+  function promptScreen(stage) {
+    const isCore=stage==='primary';
+    const idx=isCore?state.primaryIndex:state.secondaryIndex;
+    const items=isCore?PRIMARY:SECONDARY;
+    const q=items[idx];
+    const answer=(isCore?state.primaryAnswers:state.secondaryAnswers)[idx];
+    let choices='';
+    if (isCore) {
+      const names=['Not like me','Rarely like me','Sometimes like me','Often like me','Very much like me'];
+      choices=names.map((n,i)=>choiceHTML(n,i,answer)).join('');
+    } else if(q.contrast) {
+      const names=['Strongly A','Leaning A','Neither feels right','Leaning B','Strongly B'];
+      choices=names.map((n,i)=>choiceHTML(n,i,answer)).join('');
+    } else {
+      choices=q.options.map((o,i)=>choiceHTML(o[0],i,answer)).join('');
+    }
+    const questionText=isCore?q.text:q.text;
+    const helper = isCore ? 'Answer based on what is consistently true of you—not what you wish were true. There are no good or bad types.' : q.contrast ? 'Choose the distinction that best describes your actual tendencies. “Neither” is valid if neither fits.' : 'Choose the option that best describes your default behavior, not simply your favorite aesthetic.';
+    const contrast=q.contrast ? `<div class="contrast-pair"><div class="contrast-side"><strong>A</strong><p>${escapeHTML(q.a)}</p></div><div class="contrast-side"><strong>B</strong><p>${escapeHTML(q.b)}</p></div></div>` : '';
+    return `<div class="question-layout">${stageLabel(stage)}${progress(stage,idx,items.length)}<div class="question-box"><div class="question-label">${isCore?'Core identity · what you are, do, and symbolize':escapeHTML(q.lensName)+' · '+escapeHTML(q.lensSub)}</div><h2 class="question-title" id="question-title">${escapeHTML(questionText)}</h2><p class="question-helper">${escapeHTML(helper)}</p>${contrast}<div class="choices" role="group" aria-labelledby="question-title">${choices}</div><div class="question-footer"><button class="btn btn-ghost" data-action="back">← Back</button><span class="keyboard-tip">Press ${q.contrast || isCore?'1–5':'1–4'} to answer · Auto-advance</span></div></div><div class="principle"><strong>Remember:</strong> a type comes from more than appearance or one isolated ability. Focus on your patterns of behavior, strengths, environment, and symbolism.</div></div>`;
+  }
+  function choiceHTML(text,i,answer) { return `<button type="button" class="choice ${answer===i?'selected':''}" data-answer="${i}" aria-pressed="${answer===i}"><span class="choice-index">${i+1}</span><span>${escapeHTML(text)}</span></button>`; }
+  function typeLabel(type) { return `<span class="type-label" ${theme(type)}><span class="dot"></span>${type} type</span>`; }
+  function identityStrip(primary) { const info=TYPE_INFO[primary]; return `<div class="summary-strip"><div class="summary-bit"><div class="label">What you are</div><p>${escapeHTML(info.essence)}</p></div><div class="summary-bit"><div class="label">What you do</div><p>${escapeHTML(info.do)}</p></div><div class="summary-bit"><div class="label">What you symbolize</div><p>${escapeHTML(info.symbol)}</p></div></div>`; }
+  function interlude() {
+    const ranked=coreResults(), main=ranked[0].type, info=TYPE_INFO[main];
+    const close=ranked[0].pct-ranked[1].pct<=.0834;
+    return `<section class="interlude">${stageLabel('secondary')}<div class="eyebrow">Stage one complete</div><h2>Your main type is taking shape.</h2><div class="type-sigil" ${theme(main)} aria-hidden="true">${info.mark}</div><div>${typeLabel(main)}</div><div class="big-type" ${theme(main)} style="color:${info.color}">${main}</div><p class="lead">Based on 54 questions, <strong>${main}</strong> is your strongest primary-type pattern. This is a provisional typing until the eight-lens refinement is complete.</p>${close?`<div class="callout"><strong>Close result:</strong> ${main} and ${ranked[1].type} scored very similarly. Your primary type is a best-fit interpretation, not a definitive measurement.</div>`:''}${identityStrip(main)}<div class="highlight-panel"><h3>Next: does a second type actually fit?</h3><p>You'll answer 32 questions across eight attributes: <strong>biology, natural ability, environment, adaptation, physical form, mythology, elemental power, and combat identity</strong>. Some questions directly separate commonly confused types. A secondary type is awarded only when multiple attributes support it and the first stage agrees. If the evidence is weak or ambiguous, you remain a single type.</p></div><div class="actions"><button class="btn btn-primary" data-action="continue-secondary">Refine my typing →</button><button class="btn btn-ghost" data-action="back">← Revisit last answer</button></div></section>`;
+  }
+  function typeTile(type,role) { return `<div class="type-tile" ${theme(type)}><span class="topline">${role}</span><span class="name">${type}</span></div>`; }
+  function contrastSummary() {
+    const contrasts=SECONDARY.map((q,i)=>({...q,index:i})).filter(q=>q.contrast);
+    return `<details class="print-hide"><summary>See the eight close-type distinctions you answered</summary><p class="small muted">Aesthetics alone don't determine type. These items distinguish the underlying traits behind similar-looking types.</p><div class="compare-list">${contrasts.map((q,i)=>{
+      const a=state.secondaryAnswers[q.index];
+      const decision=a===2?'Neither':a<2?q.contrast[0]+(a===0?' strongly':' slightly'):q.contrast[1]+(a===4?' strongly':' slightly');
+      return `<div class="compare-item"><div><strong>${q.contrast.join(' vs. ')}</strong><div class="small muted">${CONTRAST_COPY[i]}</div></div><span>${escapeHTML(decision)}</span></div>`;
+    }).join('')}</div></details>`;
+  }
+  function results() {
+    const core=coreResults(), r=secondaryResults(), primary=r.primary, second=r.secondary;
+    const close=core[0].pct-core[1].pct<=.0834;
+    const badge=second?'Supported dual typing':'Single-type identity';
+    const primaryInfo=TYPE_INFO[primary];
+    const bars=core.slice(0,5).map(c=>`<div><div class="bar-head"><strong>${c.type}</strong><span>${Math.round(c.pct*100)} / 100</span></div><div class="bar-bg"><div class="bar-fill" style="--type-color:${TYPE_INFO[c.type].color};width:${Math.round(c.pct*100)}%"></div></div></div>`).join('');
+    let rationale;
+    if (second) {
+      const info=TYPE_INFO[second];
+      rationale=`<p><strong>${second}</strong> emerged repeatedly from your second-stage choices across <strong>${r.best.lenses.length} different identity attributes</strong>, and your first-stage answers also supported it. It wasn't added simply because its aesthetic appealed to you.</p><div class="lens-chips">${r.best.lenses.map(l=>`<span class="lens-chip">${escapeHTML(l)}</span>`).join('')}</div><p><strong>Its contribution:</strong> ${escapeHTML(info.essence)} ${escapeHTML(info.symbol)}</p>`;
+    } else {
+      rationale=`<p>No additional type met the evidence standard. To earn a second type, one contender must be chosen repeatedly across several identity attributes, have support from the main-type quiz, and stand clearly ahead of other contenders.</p><p>Your closest secondary influence was <strong>${r.best.type}</strong>, but its evidence was not strong or distinct enough to justify a dual type. <strong>Being single-type is a positive, complete outcome—not an incomplete result.</strong></p>`;
+    }
+    return `<section class="results">${stageLabel('results')}<div class="result-top"><div class="eyebrow">Your complete type profile</div><h2>${second?'Two sides. One identity.':'One clear identity.'}</h2><p class="muted">${badge} · based on ${TOTAL} questions</p><div class="result-types">${typeTile(primary,'Main type')}${second?'<span class="plus" aria-label="plus">+</span>'+typeTile(second,'Secondary type'):''}</div>${close?`<p class="callout"><strong>Close primary result:</strong> ${primary} and ${core[1].type} were separated by less than one response step on the core scale. Treat your top choice as a best fit, not a definitive assignment.</p>`:''}<p class="result-note">${second ? `${primaryInfo.essence} ${TYPE_INFO[second].do}` : `${primaryInfo.essence} ${primaryInfo.do}`}</p></div>
+    <section class="result-section"><h3>The three foundations of your identity</h3><p>Typing reflects the interaction between your nature, what you're capable of, and what your traits represent—not physical resemblance, preferred colors, or isolated abilities.</p>${identityStrip(primary)}${second?`<p><strong>Your ${second} dimension:</strong> ${escapeHTML(TYPE_INFO[second].do)} ${escapeHTML(TYPE_INFO[second].symbol)}</p>`:''}</section>
+    <section class="result-section"><h3>Why ${second?'two types':'one type'}?</h3>${rationale}<p class="micro-note">The refinement required repeated choices across multiple lenses, corroborating core answers, and a clear margin over alternatives. The refinement considered four paired patterns: biology + natural ability, environment + adaptation, physical form + mythology, and elemental power + combat identity.</p></section>
+    <section class="result-section"><h3>What your core answers favored</h3><p>Your top five primary-stage alignments. These are relative agreement scores, not a statistical probability or a scientific measurement of personality.</p><div class="bars">${bars}</div><p class="micro-note">The primary type is determined only in stage one. Stage two cannot replace it; it can only provide enough independent evidence to add one secondary type.</p></section>
+    <section class="result-section"><h3>Similar types aren't interchangeable</h3><p>Rock is not simply Ground; Ghost isn't automatically Dark; Fairy isn't merely Psychic; Flying doesn't necessarily mean Dragon. The close-call questions tested these conceptual boundaries rather than asking which aesthetic you liked best.</p>${contrastSummary()}</section>
+    <div class="callout"><strong>Interpretation note:</strong> This is a fictional, metaphorical framework—not a psychological diagnosis. Dark suggests strategy, not wrongdoing; Poison suggests sensitivity to risk, not toxicity. No trait, skill, habitat, or appearance automatically makes a person a type. The most convincing result is the identity that coherently connects what you are, what you do, and what you symbolize.</div>
+    <div class="actions print-hide"><button class="btn btn-primary" data-action="copy">Copy my type result</button><button class="btn btn-outline" data-action="print">Print / save as PDF</button><button class="btn btn-ghost" data-action="reset">Retake quiz</button></div><p id="copy-feedback" class="small muted" role="status" aria-live="polite"></p></section>`;
+  }
+  function render() {
+    app.innerHTML=state.screen==='intro'?intro():state.screen==='primary'?promptScreen('primary'):state.screen==='interlude'?interlude():state.screen==='secondary'?promptScreen('secondary'):results();
+    save();
+  }
+  function navigateTo(screen) { clearTimeout(nextTimer); nextTimer=null; state.screen=screen; render(); window.scrollTo({ top:0, behavior:'instant' }); }
+  function back() {
+    clearTimeout(nextTimer); nextTimer=null;
+    if(state.screen==='primary') { if(state.primaryIndex>0) state.primaryIndex--; else return navigateTo('intro'); }
+    else if(state.screen==='interlude') {state.primaryIndex=PRIMARY.length-1; state.screen='primary';}
+    else if(state.screen==='secondary') { if(state.secondaryIndex>0) state.secondaryIndex--; else state.screen='interlude'; }
+    else if(state.screen==='results') { state.screen='secondary'; state.secondaryIndex=SECONDARY.length-1; }
+    render();
+  }
+  function answer(n) {
+    if (nextTimer !== null) return;
+    const core=state.screen==='primary';
+    if (!core && state.screen!=='secondary') return;
+    const index=core?state.primaryIndex:state.secondaryIndex;
+    const q=core?PRIMARY[index]:SECONDARY[index];
+    if(n<0 || n>=(core||q.contrast?5:4)) return;
+    if(core) state.primaryAnswers[index]=n;
+    else state.secondaryAnswers[index]=n;
+    render();
+    nextTimer=setTimeout(()=>{
+      nextTimer=null;
+      if(core) { if(state.primaryIndex===PRIMARY.length-1) navigateTo('interlude'); else { state.primaryIndex++; render(); } }
+      else { if(state.secondaryIndex===SECONDARY.length-1) navigateTo('results'); else { state.secondaryIndex++; render(); } }
+      // Give keyboard users the next prompt without requiring a new mouse target.
+      const first=app.querySelector('[data-answer="0"]');
+      if (first) first.focus({preventScroll:true});
+    },125);
+  }
+  function reset() {
+    if(!window.confirm('Retake the quiz? This will clear your saved answers in this browser.')) return;
+    clearTimeout(nextTimer); nextTimer=null; state=fresh(); navigateTo('intro');
+  }
+  async function copyResults() {
+    const r=secondaryResults();
+    const text=`My Pokémon-inspired typing: ${r.primary}${r.secondary?' / '+r.secondary:''}.\nPrimary identity: ${TYPE_INFO[r.primary].essence}\n${r.secondary?'Secondary dimension: '+TYPE_INFO[r.secondary].do:'Single-type: no second type had enough corroborating evidence.'}\nType / Identity — fan-made 86-question quiz`;
+    const label=document.getElementById('copy-feedback');
+    try { await navigator.clipboard.writeText(text); if(label) label.textContent='Result copied to clipboard.'; }
+    catch { if(label) label.textContent='Clipboard access unavailable. You can select and copy your result from this page.'; }
+  }
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('button');
+    if(!btn || !app.contains(btn)) return;
+    if(btn.hasAttribute('data-answer')) { answer(Number(btn.getAttribute('data-answer'))); return; }
+    const action=btn.getAttribute('data-action');
+    if(action==='start') navigateTo('primary');
+    else if(action==='back') back();
+    else if(action==='continue-secondary') navigateTo('secondary');
+    else if(action==='reset') reset();
+    else if(action==='copy') copyResults();
+    else if(action==='print') window.print();
+  });
+  document.addEventListener('keydown',e=>{
+    if(!['primary','secondary'].includes(state.screen) || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+    if(/^[1-5]$/.test(e.key)) { const n=Number(e.key)-1; const q=state.screen==='secondary'?SECONDARY[state.secondaryIndex]:null; if(state.screen==='primary'||q.contrast||n<4) { e.preventDefault(); answer(n); } }
+    if(e.key==='Backspace') {e.preventDefault();back();}
+  });
+  // Content integrity checks for future maintainers.
+  const valid = PRIMARY.length===54 && SECONDARY.length===32 && TYPES.every(t=>PRIMARY.filter(q=>q.type===t).length===3) && LENSES.length===8 && LENSES.every(l=>l.qs.length===4 && l.qs.filter(q=>q.contrast).length===1);
+  if(!valid) console.warn('Quiz question inventory has changed. Review scoring thresholds and on-page counts.');
+  window.addEventListener('storage',e=>{ if(e.key===STORAGE_KEY && !nextTimer) {state=restore();render();} });
+  render();
+})();
+</script>
+</body>
+</html>
